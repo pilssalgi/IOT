@@ -1,11 +1,12 @@
 #include <SoftwareSerial.h>
 #include <ESP8266.h>
+#include <ESP8266HTTPClient.h>
 
 #define SSID "SHIFTBRAIN"
 #define PASS "r9YBbWZ8GmF"
 #define DST_IP "220.181.111.85" //baidu.com
 
-SoftwareSerial esp8266Serial = SoftwareSerial(2, 3);
+SoftwareSerial esp8266Serial = SoftwareSerial(2, 3); //rx tx
 ESP8266 wifi = ESP8266(esp8266Serial);
 
 void setup()
@@ -52,8 +53,8 @@ void setup()
     Serial.println(getStatus(wifi.connect(ESP8266_PROTOCOL_TCP, DST_IP, 80)));
 
     // send
-    Serial.print("send: ");
-    Serial.println(getStatus(wifi.send("GET / HTTP/1.0\r\n\r\n")));
+//    Serial.print("send: ");
+//    Serial.println(getStatus(wifi.send("GET / HTTP/1.0\r\n\r\n")));
 
 }
 

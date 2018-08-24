@@ -1,11 +1,28 @@
 #include <SoftwareSerial.h>
 #include <ESP8266.h>
+#include <ESP8266Client.h>
+
+#include <WiFiClient.h>
+WiFiClient client;
+
+
 
 #define SSID "SHIFTBRAIN"
 #define PASS "r9YBbWZ8GmF"
-#define DST_IP "220.181.111.85"
+#define DST_IP "220.181.111.85" //baidu.com
+#define AppID "310ba737157e1b73750825fda41dde70" // openweathermap.org
+char server[] = "api.openweathermap.org";
+char getPath[] = "data/2.5/weather?id=1850147&APPID=310ba737157e1b73750825fda41dde70";
 
-SoftwareSerial esp8266Serial = SoftwareSerial(10, 11);
+//1. api.openweathermap.org 
+//2. api.openweathermap.org/data/2.5
+//3. api.openweathermap.org/data/2.5/weather?
+//4. api.openweathermap.org/data/2.5/weather?id=cityID&AppID=
+//   Tokyo = 1850147
+//   http://api.openweathermap.org/data/2.5/weather?id=1850147&APPID=310ba737157e1b73750825fda41dde70
+
+
+SoftwareSerial esp8266Serial = SoftwareSerial(2, 3); //rx tx
 ESP8266 wifi = ESP8266(esp8266Serial);
 
 void setup()
@@ -35,34 +52,58 @@ void setup()
     Serial.print(" : ");
     Serial.println(version);
 
+    // getAP
+    char ap[32] = {};
+    Serial.print("getAP: ");
+    Serial.print(getStatus(wifi.getAP(ap)));
+    Serial.print(" : ");
+    Serial.println(ap);
+
+
 
     /****************************************/
     /******        WiFi commands       ******/
     /****************************************/
-    // setWifiMode
-    Serial.print("setWifiMode: ");
-    Serial.println(getStatus(wifi.setMode(ESP8266_WIFI_STATION)));
-    
     // joinAP
     Serial.print("joinAP: ");
     Serial.println(getStatus(wifi.joinAP(SSID, PASS)));
 
-      // getAP
-    char ap[32] = {};
-    Serial.print("getAP: ");
-    Serial.print(getStatus(wifi.getAP(ap)));
-    Serial.println(ap);
 
     /****************************************/
-    /******       TCP/IP commands      ******/
-    /****************************************/
-    // connect
+    /******       GET Weather Data ******/
+    //client.print(String("GET ") + url + " HTTP/1.1\r\n" + "Host: " + host + "\r\n" +  "Connection: close\r\n\r\n");
+
     Serial.print("connect: ");
-    Serial.println(getStatus(wifi.connect(ESP8266_PROTOCOL_TCP, DST_IP, 80)));
+    Serial.println(getStatus(wifi.connect(ESP8266_PROTOCOL_TCP, server, 80)));
+    if(wifi.connect(ESP8266_PROTOCOL_TCP,server, 80)) {
+      Serial.println("connected to server"); 
+      Serial.print("send: ");
+      wifi.send("GET http://api.openweathermap.org/data/2.5/weather?id=1850147&APPID=310ba737157e1b73750825fda41dde70 HTTP/1.0\r\n\r\n");
+//      wifi.println("GET data/2.5/weather?id=1850147&APPID=310ba737157e1b73750825fda41dde70 HTTP/1.1");
+//      wifi.println("Host: api.openweathermap.org");
+//      wifi.println("Connection: close");
+//      wifi.println();
+    }
 
+     // send
+       
+
+
+    Serial.print("data: ");
+    String datas = "";
+
+    while(wifi.available()){
+//      datas += wifi.readStringUntil('\r');
+      Serial.println(wifi.read());
+    }
+
+    Serial.println(wifi.available());
+
+    /****************************************/
+//     
     // send
-    Serial.print("send: ");
-    Serial.println(getStatus(wifi.send("GET / HTTP/1.0\r\n\r\n")));
+//    Serial.print("send: ");
+//    Serial.println(getStatus(wifi.send("GET / HTTP/1.0\r\n\r\n")));
 
 }
 
@@ -76,7 +117,7 @@ void loop()
     unsigned int id;
     int length;
     int totalRead;
-    char buffer[300] = {};
+    char buffer[400] = {};
 
     if ((length = wifi.available()) > 0) {
       id = wifi.getId();
@@ -88,10 +129,11 @@ void loop()
         Serial.print("/");
         Serial.print(length);
         Serial.print(" bytes from client ");
-        //Serial.print("from client ");
+        Serial.print("from client ");
         Serial.print(id);
         Serial.print(": ");
         Serial.println((char*)buffer);
+//          Serial.println(wifi.read());
       }
     }
 }

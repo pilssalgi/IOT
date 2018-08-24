@@ -30,7 +30,7 @@ void loop()
       Serial.println(val); //print sound value to Serial        
 
       if(moveDelay==0){
-        if(val > 21){
+        if(val > 21 ){
           deg = 180;
           moveDelay = 30;
           myservo.write(deg);
