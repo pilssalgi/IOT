@@ -4,7 +4,7 @@
 #define PASS "r9YBbWZ8GmF"
 #define DST_IP "220.181.111.85" //baidu.com
 
-SoftwareSerial dbgSerial(10, 11); // RX, TX
+SoftwareSerial dbgSerial(2,3); // RX, TX
 
 void setup()
 {

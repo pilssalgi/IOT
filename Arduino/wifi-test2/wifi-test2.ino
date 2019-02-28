@@ -1,3 +1,6 @@
+#include <ESP8266.h>
+#include <ESP8266Client.h>
+
 /*
  *  This sketch sends data via HTTP GET requests to data.sparkfun.com service.
  *
@@ -6,7 +9,7 @@
  *
  */
 
-#include <ESP8266WiFi.h>
+//#include <ESP8266WiFi.h>
 
 const char* ssid     = "SHIFTBRAIN";
 const char* password = "r9YBbWZ8GmF";

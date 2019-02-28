@@ -1,15 +1,20 @@
+//#include <HTTPClient.h>
+
+#include <b64.h>
+#include <HttpClient.h>
+
 #include <SoftwareSerial.h>
 #include <ESP8266.h>
 #include <ESP8266Client.h>
 
 #include <WiFiClient.h>
+
+
 WiFiClient client;
-
-
+//HTTPClient http;
 
 #define SSID "SHIFTBRAIN"
 #define PASS "r9YBbWZ8GmF"
-#define DST_IP "220.181.111.85" //baidu.com
 #define AppID "310ba737157e1b73750825fda41dde70" // openweathermap.org
 char server[] = "api.openweathermap.org";
 char getPath[] = "data/2.5/weather?id=1850147&APPID=310ba737157e1b73750825fda41dde70";
@@ -77,34 +82,8 @@ void setup()
     Serial.println(getStatus(wifi.connect(ESP8266_PROTOCOL_TCP, server, 80)));
     if(wifi.connect(ESP8266_PROTOCOL_TCP,server, 80)) {
       Serial.println("connected to server"); 
-      Serial.print("send: ");
       wifi.send("GET http://api.openweathermap.org/data/2.5/weather?id=1850147&APPID=310ba737157e1b73750825fda41dde70 HTTP/1.0\r\n\r\n");
-//      wifi.println("GET data/2.5/weather?id=1850147&APPID=310ba737157e1b73750825fda41dde70 HTTP/1.1");
-//      wifi.println("Host: api.openweathermap.org");
-//      wifi.println("Connection: close");
-//      wifi.println();
     }
-
-     // send
-       
-
-
-    Serial.print("data: ");
-    String datas = "";
-
-    while(wifi.available()){
-//      datas += wifi.readStringUntil('\r');
-      Serial.println(wifi.read());
-    }
-
-    Serial.println(wifi.available());
-
-    /****************************************/
-//     
-    // send
-//    Serial.print("send: ");
-//    Serial.println(getStatus(wifi.send("GET / HTTP/1.0\r\n\r\n")));
-
 }
 
 void loop()
@@ -122,7 +101,6 @@ void loop()
     if ((length = wifi.available()) > 0) {
       id = wifi.getId();
       totalRead = wifi.read(buffer, 300);
-
       if (length > 0) {
         Serial.print("Received ");
         Serial.print(totalRead);
@@ -133,7 +111,7 @@ void loop()
         Serial.print(id);
         Serial.print(": ");
         Serial.println((char*)buffer);
-//          Serial.println(wifi.read());
+        Serial.println(wifi.read());
       }
     }
 }
